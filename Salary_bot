@@ -1,0 +1,52 @@
+import telebot
+import requests
+import json
+
+TOKEN = '6164420716:AAF8rmq6vROOo_LWRTngyU2fuzGW9DZBCdE'
+bot = telebot.TeleBot (TOKEN)
+
+posts = {
+    'Директор':'350.000',
+    'Менеджер':'195.000',
+    'Специалист':'100.000',
+}
+
+
+@bot.message_handler(commands=['start', 'help'])
+def help(message: telebot.types.Message):
+    text = 'Чтобы начать работу с ботом введите команду в следующем формате: \n \
+        <должность - список - > /positions \n \
+        <стаж работы - лет> \n \
+        <текущая зарплата - рублей в месяц>'
+    bot.reply_to(message, text)
+
+
+@bot.message_handler(commands=['author'])
+def author(message: telebot.types.Message):
+    text = 'Чатик создан Дмитрием Любо'
+    bot.reply_to(message, text)
+
+
+@bot.message_handler(commands=['positions'])
+def positions(message: telebot.types.Message):
+    text = 'Варианты должностей:'
+    for i in posts.keys():
+        text = '\n'.join((posts))
+    bot.reply_to(message, text)
+
+
+@bot.message_handler(content_types=['text', ])
+def convert(message: telebot.types.Message):
+    quote = message.text()
+    r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={quote}&tsyms=USD')
+    text = json.loads(r.content)
+    bot.send_message(message.chat.id, text)
+
+
+
+@bot.message_handler()
+def echo_test(message: telebot.types.Message):
+    bot.send_message(message.chat.id, 'Привет, человек, хочешь узнать свою справедливую зарплату?')
+
+
+bot.polling()
