@@ -35,15 +35,6 @@ def positions(message: telebot.types.Message):
     bot.reply_to(message, text)
 
 
-@bot.message_handler(content_types=['text', ])
-def convert(message: telebot.types.Message):
-    quote = message.text()
-    r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={quote}&tsyms=USD')
-    text = json.loads(r.content)
-    bot.send_message(message.chat.id, text)
-
-
-
 @bot.message_handler()
 def echo_test(message: telebot.types.Message):
     bot.send_message(message.chat.id, 'Привет, человек, хочешь узнать свою справедливую зарплату?')
